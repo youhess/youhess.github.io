@@ -1,4 +1,3 @@
-# VRCHAT的游戏概念实际
 
 ---
 title: 谁是卧底 VRChat 中文版
