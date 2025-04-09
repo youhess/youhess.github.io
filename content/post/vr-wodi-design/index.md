@@ -4,7 +4,7 @@ title: 谁是卧底 VRChat 中文版
 description: 初步构想一款基于 VRChat 平台的中文社交推理游戏，包含游戏机制、角色设计、UI、技术结构等规划。
 slug: vr-wodi-design
 date: 2025-04-08T00:00:00+0000
-image: images/cover.jpg
+image: cover.jpg
 categories:
   - 游戏设计
 tags:
