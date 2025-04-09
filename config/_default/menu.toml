@@ -16,9 +16,9 @@ url = "https://github.com/youhess"
 icon = "brand-github"
 
 [[social]]
-identifier = "twitter"
-name = "Twitter"
-url = "https://twitter.com"
+identifier = "bilibili"
+name = "哔哩哔哩"
+url = "https://space.bilibili.com/10034096"
 
 [social.params]
-icon = "brand-twitter"
+icon = "brand-bilibili"

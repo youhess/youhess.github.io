@@ -6,7 +6,7 @@ slug: vr-wodi-design
 date: 2025-04-08T00:00:00+0000
 image: cover.jpg
 categories:
-  - 游戏设计
+  - Game Design
 tags:
   - VRChat
 weight: 2
