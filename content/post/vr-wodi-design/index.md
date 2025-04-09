@@ -1,6 +1,5 @@
 # VRCHAT的游戏概念实际
 
-```markdown
 ---
 title: 谁是卧底 VRChat 中文版
 description: 初步构想一款基于 VRChat 平台的中文社交推理游戏，包含游戏机制、角色设计、UI、技术结构等规划。
@@ -13,7 +12,6 @@ tags:
   - VRChat
 weight: 2
 ---
-```
 
 ### 前言
 
