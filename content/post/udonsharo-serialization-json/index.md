@@ -1,5 +1,5 @@
 ---
-title: UdonSharp 序列化方案简要指南
+title: UdonSharp 同步方法指南
 description: VRCJson 是 VRChat SDK 提供的 JSON 序列化工具，支持在 UdonSharp 中进行数据序列化和反序列化。
 slug: vr-wodi-design
 date: 2025-05-07T00:00:00+0000
@@ -11,64 +11,106 @@ tags:
 weight: 3
 ---
 
-## 核心知识点
+# UdonSharp 同步方法指南
 
-### 1. VRCJson 基础
-VRCJson 是 VRChat SDK 提供的 JSON 序列化工具，支持在 UdonSharp 中进行数据序列化和反序列化。
+## 同步变量
 
-### 2. 基本类型注意事项
-- **类型转换问题**：序列化后 Int 可能变成 Double
-- **没有原生整数类型**：JSON 中所有数字都是浮点数
-
-### 3. 数据类型
-主要使用的数据类型：
-- DataList：类似数组
-- DataDictionary：类似字典
-- DataToken：通用数据容器
-
-## 实用序列化方案
-
-### 方案一：灵活类型读取
-在数据反序列化时不指定特定类型，而是根据实际类型进行转换：
-
+### 1. 同步模式设置
+在类定义上方添加同步模式属性：
 ```
-// 读取数据
-if (dataDict.TryGetValue("key", out DataToken token)) {
-    // 根据实际类型处理
-    if (token.TokenType == TokenType.Int) { ... }
-    else if (token.TokenType == TokenType.Double) { ... }
-    else if (token.TokenType == TokenType.String) { ... }
+[UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]  // 手动同步
+[UdonBehaviourSyncMode(BehaviourSyncMode.Continuous)]  // 连续同步
+```
+
+### 2. 可同步变量标记
+使用 `[UdonSynced]` 属性标记需要同步的变量：
+```
+[UdonSynced] private int myValue;
+[UdonSynced] private string myText;
+[UdonSynced] private bool myState;
+```
+
+### 3. 复杂数据类型同步
+对于复杂数据类型，需要序列化成字符串：
+```
+[UdonSynced] private string serializedData;  // 存储序列化后的JSON
+private DataList myDataList;  // 实际使用的数据对象
+```
+
+## 同步方法
+
+### 1. 请求同步
+修改变量后，调用请求同步方法将数据发送给所有玩家：
+```
+RequestSerialization();
+```
+
+### 2. 监听反序列化
+当接收到同步数据时，通过此方法处理：
+```
+public override void OnDeserialization()
+{
+    // 处理同步后的数据
 }
 ```
 
-### 方案二：使用字符串作为中间类型
-所有数值类型都转换为字符串再序列化，读取时再转回：
-
+### 3. 网络事件
+向特定目标或所有玩家发送事件：
 ```
-// 写入时
-dict.SetValue("id", playerId.ToString());
+// 发送给所有玩家
+SendCustomNetworkEvent(NetworkEventTarget.All, "方法名");
 
-// 读取时
-int value = int.Parse(token.String);
-```
-
-### 方案三：类型统一策略
-全部使用 Double 类型存储数值：
-
-```
-// 写入时
-dict.SetValue("id", (double)playerId);
-
-// 读取时
-int id = (int)token.Double;
+// 发送给除自己外的所有玩家
+SendCustomNetworkEvent(NetworkEventTarget.Others, "方法名");
 ```
 
-## 最佳实践
+### 4. 延迟网络事件
+设置延迟执行的事件：
+```
+SendCustomEventDelayedSeconds("方法名", 延迟秒数);
+```
 
-1. **验证序列化结果**：序列化后立即反序列化测试
-2. **避免固定类型检查**：使用 `TryGetValue(key, out token)` 而非 `TryGetValue(key, TokenType.Int, out token)`
-3. **统一类型策略**：项目中对同类数据采用一致的类型处理方式
-4. **添加类型检查日志**：在关键处理点记录实际类型
-5. **实现数据清理机制**：关键状态变更点执行完整数据重置
+## 所有权控制
 
-通过采用以上方案，可以有效避免 UdonSharp 序列化中的类型转换问题，保证数据一致性。
+### 1. 检查所有权
+验证当前玩家是否拥有对象所有权：
+```
+if (Networking.IsOwner(gameObject)) {
+    // 只有拥有所有权的玩家才执行
+}
+```
+
+### 2. 获取/设置所有权
+```
+// 获取当前所有者
+VRCPlayerApi owner = Networking.GetOwner(gameObject);
+
+// 设置所有权（仅当前玩家能设置自己为所有者）
+Networking.SetOwner(Networking.LocalPlayer, gameObject);
+```
+
+### 3. 所有权变更监听
+监听所有权转移事件：
+```
+public override void OnOwnershipTransferred(VRCPlayerApi player)
+{
+    // 处理所有权变更逻辑
+}
+```
+
+## 数据同步最佳实践
+
+1. **所有权检查**：修改同步变量前验证所有权
+2. **批量更新**：一次性修改多个变量后再调用一次 RequestSerialization()
+3. **数据验证**：OnDeserialization 中验证数据有效性
+4. **同步优化**：使用 Manual 模式减少不必要的网络流量
+5. **错误处理**：添加异常情况处理和数据恢复机制
+
+通过这些方法，可以实现 UdonSharp 中的高效数据同步，保证多玩家环境下的一致性体验。
+
+
+
+## 我的问题
+
+类型转换问题：序列化后 Int 可能变成 Double
+没有原生整数类型：JSON 中所有数字都是浮点数
