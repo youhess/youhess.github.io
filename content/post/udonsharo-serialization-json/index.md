@@ -1,14 +1,14 @@
 ---
 title: UdonSharp 同步方法指南
 description: VRCJson 是 VRChat SDK 提供的 JSON 序列化工具，支持在 UdonSharp 中进行数据序列化和反序列化。
-slug: vr-wodi-design
+slug: udonsharo-serialization-json
 date: 2025-05-07T00:00:00+0000
 image: cover.jpg
 categories:
   - Udonsharp
 tags:
   - VRChat
-weight: 3
+weight: 2
 ---
 
 # UdonSharp 同步方法指南
