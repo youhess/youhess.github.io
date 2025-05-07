@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Udonsharp on Youhess's Blog</title><link>http://youhess.github.io/categories/udonsharp/</link><description>Recent content in Udonsharp on Youhess's Blog</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Wed, 07 May 2025 00:00:00 +0000</lastBuildDate><atom:link href="http://youhess.github.io/categories/udonsharp/index.xml" rel="self" type="application/rss+xml"/><item><title>UdonSharp 同步方法指南</title><link>http://youhess.github.io/p/udonsharo-serialization-json/</link><pubDate>Wed, 07 May 2025 00:00:00 +0000</pubDate><guid>http://youhess.github.io/p/udonsharo-serialization-json/</guid><description>&lt;img src="http://youhess.github.io/p/udonsharo-serialization-json/cover.jpg" alt="Featured image of post UdonSharp 同步方法指南" />&lt;h1 id="udonsharp-同步方法指南">UdonSharp 同步方法指南
+&lt;/h1>&lt;h2 id="同步变量">同步变量
+&lt;/h2>&lt;h3 id="1-同步模式设置">1. 同步模式设置
+&lt;/h3>&lt;p>在类定义上方添加同步模式属性：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">[UdonBehaviourSyncMode(BehaviourSyncMode.Manual)] // 手动同步
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">[UdonBehaviourSyncMode(BehaviourSyncMode.Continuous)] // 连续同步
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="2-可同步变量标记">2. 可同步变量标记
+&lt;/h3>&lt;p>使用 &lt;code>[UdonSynced]&lt;/code> 属性标记需要同步的变量：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">[UdonSynced] private int myValue;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">[UdonSynced] private string myText;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">[UdonSynced] private bool myState;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="3-复杂数据类型同步">3. 复杂数据类型同步
+&lt;/h3>&lt;p>对于复杂数据类型，需要序列化成字符串：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">[UdonSynced] private string serializedData; // 存储序列化后的JSON
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">private DataList myDataList; // 实际使用的数据对象
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="同步方法">同步方法
+&lt;/h2>&lt;h3 id="1-请求同步">1. 请求同步
+&lt;/h3>&lt;p>修改变量后，调用请求同步方法将数据发送给所有玩家：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">RequestSerialization();
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="2-监听反序列化">2. 监听反序列化
+&lt;/h3>&lt;p>当接收到同步数据时，通过此方法处理：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">public override void OnDeserialization()
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">{
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> // 处理同步后的数据
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="3-网络事件">3. 网络事件
+&lt;/h3>&lt;p>向特定目标或所有玩家发送事件：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">// 发送给所有玩家
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">SendCustomNetworkEvent(NetworkEventTarget.All, &amp;#34;方法名&amp;#34;);
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">// 发送给除自己外的所有玩家
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">SendCustomNetworkEvent(NetworkEventTarget.Others, &amp;#34;方法名&amp;#34;);
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="4-延迟网络事件">4. 延迟网络事件
+&lt;/h3>&lt;p>设置延迟执行的事件：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">SendCustomEventDelayedSeconds(&amp;#34;方法名&amp;#34;, 延迟秒数);
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="所有权控制">所有权控制
+&lt;/h2>&lt;h3 id="1-检查所有权">1. 检查所有权
+&lt;/h3>&lt;p>验证当前玩家是否拥有对象所有权：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">if (Networking.IsOwner(gameObject)) {
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> // 只有拥有所有权的玩家才执行
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="2-获取设置所有权">2. 获取/设置所有权
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">// 获取当前所有者
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">VRCPlayerApi owner = Networking.GetOwner(gameObject);
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">// 设置所有权（仅当前玩家能设置自己为所有者）
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Networking.SetOwner(Networking.LocalPlayer, gameObject);
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="3-所有权变更监听">3. 所有权变更监听
+&lt;/h3>&lt;p>监听所有权转移事件：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">public override void OnOwnershipTransferred(VRCPlayerApi player)
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">{
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> // 处理所有权变更逻辑
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="数据同步最佳实践">数据同步最佳实践
+&lt;/h2>&lt;ol>
+&lt;li>&lt;strong>所有权检查&lt;/strong>：修改同步变量前验证所有权&lt;/li>
+&lt;li>&lt;strong>批量更新&lt;/strong>：一次性修改多个变量后再调用一次 RequestSerialization()&lt;/li>
+&lt;li>&lt;strong>数据验证&lt;/strong>：OnDeserialization 中验证数据有效性&lt;/li>
+&lt;li>&lt;strong>同步优化&lt;/strong>：使用 Manual 模式减少不必要的网络流量&lt;/li>
+&lt;li>&lt;strong>错误处理&lt;/strong>：添加异常情况处理和数据恢复机制&lt;/li>
+&lt;/ol>
+&lt;p>通过这些方法，可以实现 UdonSharp 中的高效数据同步，保证多玩家环境下的一致性体验。&lt;/p>
+&lt;h2 id="我的问题">我的问题
+&lt;/h2>&lt;p>类型转换问题：序列化后 Int 可能变成 Double
+没有原生整数类型：JSON 中所有数字都是浮点数&lt;/p></description></item></channel></rss>
