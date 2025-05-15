@@ -73,11 +73,11 @@
     },
     "yasarla2024sstgp": {
         "author": "Yasarla, Rajeev and Patel, Vishal M.",
-        "doi": "10.48550/arXiv.2402.03629",
-        "journal": "arXiv preprint arXiv:2402.03629",
+        "booktitle": "Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision (WACV)",
+        "doi": "10.1109/WACV57701.2024.00150",
         "keywords": "type:self-supervised, transformer, gaussian-process, image-denoising",
         "title": "Self-Supervised Denoising Transformer with Gaussian Process",
-        "type": "article",
+        "type": "inproceedings",
         "year": "2024"
     },
     "zhang2017beyond": {

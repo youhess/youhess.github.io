@@ -494,3 +494,10 @@ const selectors = (function() {
     }
 
 })();
+
+$(document).ready(function () {
+    // Add default selectors for type
+    selectors.toggleSelector('keywords', 'type:self-supervised');
+    selectors.toggleSelector('keywords', 'type:supervised');
+    selectors.toggleSelector('keywords', 'type:unsupervised');
+});
