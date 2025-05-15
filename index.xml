@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Youhess's Blog</title><link>http://youhess.github.io/</link><description>Recent content on Youhess's Blog</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Wed, 07 May 2025 00:00:00 +0000</lastBuildDate><atom:link href="http://youhess.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>UdonSharp 同步方法指南</title><link>http://youhess.github.io/p/udonsharo-serialization-json/</link><pubDate>Wed, 07 May 2025 00:00:00 +0000</pubDate><guid>http://youhess.github.io/p/udonsharo-serialization-json/</guid><description>&lt;img src="http://youhess.github.io/p/udonsharo-serialization-json/cover.jpg" alt="Featured image of post UdonSharp 同步方法指南" />&lt;h1 id="udonsharp-同步方法指南">UdonSharp 同步方法指南
+&lt;/h1>&lt;h2 id="同步变量">同步变量
+&lt;/h2>&lt;h3 id="1-同步模式设置">1. 同步模式设置
+&lt;/h3>&lt;p>在类定义上方添加同步模式属性：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">[UdonBehaviourSyncMode(BehaviourSyncMode.Manual)] // 手动同步
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">[UdonBehaviourSyncMode(BehaviourSyncMode.Continuous)] // 连续同步
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="2-可同步变量标记">2. 可同步变量标记
+&lt;/h3>&lt;p>使用 &lt;code>[UdonSynced]&lt;/code> 属性标记需要同步的变量：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">[UdonSynced] private int myValue;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">[UdonSynced] private string myText;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">[UdonSynced] private bool myState;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="3-复杂数据类型同步">3. 复杂数据类型同步
+&lt;/h3>&lt;p>对于复杂数据类型，需要序列化成字符串：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">[UdonSynced] private string serializedData; // 存储序列化后的JSON
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">private DataList myDataList; // 实际使用的数据对象
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="同步方法">同步方法
+&lt;/h2>&lt;h3 id="1-请求同步">1. 请求同步
+&lt;/h3>&lt;p>修改变量后，调用请求同步方法将数据发送给所有玩家：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">RequestSerialization();
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="2-监听反序列化">2. 监听反序列化
+&lt;/h3>&lt;p>当接收到同步数据时，通过此方法处理：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">public override void OnDeserialization()
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">{
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> // 处理同步后的数据
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="3-网络事件">3. 网络事件
+&lt;/h3>&lt;p>向特定目标或所有玩家发送事件：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">// 发送给所有玩家
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">SendCustomNetworkEvent(NetworkEventTarget.All, &amp;#34;方法名&amp;#34;);
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">// 发送给除自己外的所有玩家
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">SendCustomNetworkEvent(NetworkEventTarget.Others, &amp;#34;方法名&amp;#34;);
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="4-延迟网络事件">4. 延迟网络事件
+&lt;/h3>&lt;p>设置延迟执行的事件：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">SendCustomEventDelayedSeconds(&amp;#34;方法名&amp;#34;, 延迟秒数);
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="所有权控制">所有权控制
+&lt;/h2>&lt;h3 id="1-检查所有权">1. 检查所有权
+&lt;/h3>&lt;p>验证当前玩家是否拥有对象所有权：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">if (Networking.IsOwner(gameObject)) {
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> // 只有拥有所有权的玩家才执行
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="2-获取设置所有权">2. 获取/设置所有权
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">// 获取当前所有者
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">VRCPlayerApi owner = Networking.GetOwner(gameObject);
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">// 设置所有权（仅当前玩家能设置自己为所有者）
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Networking.SetOwner(Networking.LocalPlayer, gameObject);
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="3-所有权变更监听">3. 所有权变更监听
+&lt;/h3>&lt;p>监听所有权转移事件：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">public override void OnOwnershipTransferred(VRCPlayerApi player)
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">{
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> // 处理所有权变更逻辑
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="数据同步最佳实践">数据同步最佳实践
+&lt;/h2>&lt;ol>
+&lt;li>&lt;strong>所有权检查&lt;/strong>：修改同步变量前验证所有权&lt;/li>
+&lt;li>&lt;strong>批量更新&lt;/strong>：一次性修改多个变量后再调用一次 RequestSerialization()&lt;/li>
+&lt;li>&lt;strong>数据验证&lt;/strong>：OnDeserialization 中验证数据有效性&lt;/li>
+&lt;li>&lt;strong>同步优化&lt;/strong>：使用 Manual 模式减少不必要的网络流量&lt;/li>
+&lt;li>&lt;strong>错误处理&lt;/strong>：添加异常情况处理和数据恢复机制&lt;/li>
+&lt;/ol>
+&lt;p>通过这些方法，可以实现 UdonSharp 中的高效数据同步，保证多玩家环境下的一致性体验。&lt;/p>
+&lt;h2 id="我的问题">我的问题
+&lt;/h2>&lt;p>类型转换问题：序列化后 Int 可能变成 Double
+没有原生整数类型：JSON 中所有数字都是浮点数&lt;/p></description></item><item><title>谁是卧底 VRChat 中文版</title><link>http://youhess.github.io/p/vr-wodi-design/</link><pubDate>Tue, 08 Apr 2025 00:00:00 +0000</pubDate><guid>http://youhess.github.io/p/vr-wodi-design/</guid><description>&lt;img src="http://youhess.github.io/p/vr-wodi-design/cover.jpg" alt="Featured image of post 谁是卧底 VRChat 中文版" />&lt;h3 id="前言">前言
+&lt;/h3>&lt;p>“vrchat geoguesser china“ 接近尾声，虽然有许多bug要修改，但是看到vrchat上并没有中文版的“谁是卧底”，就想着趁现在有激情把想法写下来。当然这份文件在后续应该会有改进。实际的完成效果我也不清楚咯。哈哈哈&lt;/p>
+&lt;h3 id="游戏基础设置">游戏基础设置
+&lt;/h3>&lt;ul>
+&lt;li>&lt;strong>玩家人数&lt;/strong>：10人上限，游戏开始后不能加入主游戏(所以一开始的时候要求玩家sgin in知道谁加入游戏）&lt;/li>
+&lt;li>&lt;strong>游戏角色&lt;/strong>：普通玩家和卧底(Imposter)&lt;/li>
+&lt;li>&lt;strong>等候区域&lt;/strong>：后来者在观众区观看，大屏幕直播当前对局&lt;/li>
+&lt;/ul>
+&lt;h3 id="数据结构优化">数据结构优化
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-jsx" data-lang="jsx">&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// 玩家数据结构
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="kd">let&lt;/span> &lt;span class="nx">players&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">[&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">playerName&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="s2">&amp;#34;xxx&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="c1">// 玩家名称
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nx">playerId&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="s2">&amp;#34;xxx&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="c1">// 玩家唯一ID
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nx">isImposter&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="kc">false&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="c1">// 是否为卧底
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nx">isOut&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="kc">false&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="c1">// 是否被淘汰
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nx">cardContent&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="s2">&amp;#34;Apple&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="c1">// 玩家拿到的词语
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nx">votes&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="mi">0&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="c1">// 当前回合获得的票数
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nx">canVote&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="kc">true&lt;/span> &lt;span class="c1">// 是否有投票权(被淘汰后为false)
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// 游戏状态数据
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="kd">let&lt;/span> &lt;span class="nx">gameState&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">isGameActive&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="kc">false&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="c1">// 游戏是否激活
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nx">currentRound&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="mi">0&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="c1">// 当前回合数
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nx">currentTurnPlayer&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="s2">&amp;#34;&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="c1">// 当前回合玩家ID
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nx">votingPhase&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="kc">false&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="c1">// 是否在投票阶段
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nx">winners&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="kc">null&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="c1">// 获胜方(&amp;#34;imposter&amp;#34;或&amp;#34;normal&amp;#34;)
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nx">normalWord&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="s2">&amp;#34;苹果&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="c1">// 普通玩家的词
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nx">imposterWord&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="s2">&amp;#34;梨&amp;#34;&lt;/span> &lt;span class="c1">// 卧底的词
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="游戏流程完善">游戏流程完善
+&lt;/h3>&lt;ol>
+&lt;li>&lt;strong>准备阶段&lt;/strong>
+&lt;ul>
+&lt;li>房主可以设置游戏参数(卧底人数、每轮描述时间)&lt;/li>
+&lt;li>玩家加入游戏位置&lt;/li>
+&lt;li>房主点击&amp;quot;开始游戏&amp;quot;&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;strong>游戏开始&lt;/strong>
+&lt;ul>
+&lt;li>系统随机分配卧底和普通玩家&lt;/li>
+&lt;li>系统分发卡牌(只对持有者可见)&lt;/li>
+&lt;li>显示首轮发言玩家(高亮效果)&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;strong>游戏轮次&lt;/strong>
+&lt;ul>
+&lt;li>&lt;strong>描述阶段&lt;/strong>：玩家按顺序描述自己拿到的词语(不能直接说出词语)&lt;/li>
+&lt;li>&lt;strong>投票阶段&lt;/strong>：所有未淘汰玩家可以投票选择怀疑的卧底&lt;/li>
+&lt;li>&lt;strong>结算阶段&lt;/strong>：得票最高者被淘汰(平票则无人淘汰)&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;strong>胜利条件&lt;/strong>
+&lt;ul>
+&lt;li>&lt;strong>普通玩家胜利&lt;/strong>：所有卧底被淘汰&lt;/li>
+&lt;li>&lt;strong>卧底胜利&lt;/strong>：卧底数量大于或等于普通玩家数量&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ol>
+&lt;h3 id="功能设计增强">功能设计增强
+&lt;/h3>&lt;ol>
+&lt;li>&lt;strong>投票系统&lt;/strong>
+&lt;ul>
+&lt;li>投票UI：圆形布局，点击玩家头像进行投票&lt;/li>
+&lt;li>投票确认：需确认后提交&lt;/li>
+&lt;li>投票显示：实时显示已投票人数(不显示投给谁)&lt;/li>
+&lt;li>计票：&lt;code>{ playerID1: votesCount1, playerID2: votesCount2, ... }&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;strong>交互设计&lt;/strong>
+&lt;ul>
+&lt;li>当前回合高亮：玩家头顶光环效果&lt;/li>
+&lt;li>被淘汰效果：玩家模型变暗/半透明&lt;/li>
+&lt;li>卡牌显示：私人UI只对玩家自己可见&lt;/li>
+&lt;li>游戏状态显示：大屏幕显示当前游戏阶段&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;strong>观战模式&lt;/strong>
+&lt;ul>
+&lt;li>观众席：可以看到游戏进行&lt;/li>
+&lt;li>信息限制：观众无法看到词语和卧底身份&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ol>
+&lt;h3 id="技术实现建议">技术实现建议
+&lt;/h3>&lt;ol>
+&lt;li>&lt;strong>VRChat Udon脚本&lt;/strong>
+&lt;ul>
+&lt;li>使用UdonSharp编写逻辑&lt;/li>
+&lt;li>使用同步变量处理多人游戏状态&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;strong>UI设计&lt;/strong>
+&lt;ul>
+&lt;li>世界中央大屏：游戏状态和计时器&lt;/li>
+&lt;li>个人UI：词语卡和投票界面&lt;/li>
+&lt;li>房主控制面板：游戏设置和开始按钮&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;strong>性能优化&lt;/strong>
+&lt;ul>
+&lt;li>减少同步变量数量&lt;/li>
+&lt;li>设置合理的网络同步频率&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ol>
+&lt;h3 id="额外创新功能">额外创新功能
+&lt;/h3>&lt;ol>
+&lt;li>&lt;strong>时间限制&lt;/strong>
+&lt;ul>
+&lt;li>描述阶段：每人60秒&lt;/li>
+&lt;li>投票阶段：30秒&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ol></description></item><item><title>Archives</title><link>http://youhess.github.io/archives/</link><pubDate>Sun, 06 Mar 2022 00:00:00 +0000</pubDate><guid>http://youhess.github.io/archives/</guid><description/></item><item><title>Links</title><link>http://youhess.github.io/links/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://youhess.github.io/links/</guid><description>&lt;p>To use this feature, add &lt;code>links&lt;/code> section to frontmatter.&lt;/p>
+&lt;p>This page&amp;rsquo;s frontmatter:&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;span class="lnt">9
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nt">links&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">title&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">GitHub&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">description&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">GitHub is the world&amp;#39;s largest software development platform.&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">website&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">https://github.com&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">image&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">title&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">TypeScript&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">description&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">TypeScript is a typed superset of JavaScript that compiles to plain JavaScript.&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">website&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">https://www.typescriptlang.org&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">image&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">ts-logo-128.jpg&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>&lt;code>image&lt;/code> field accepts both local and external images.&lt;/p></description></item><item><title>Search</title><link>http://youhess.github.io/search/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://youhess.github.io/search/</guid><description/></item></channel></rss>
