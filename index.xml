@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Youhess's Blog</title><link>http://youhess.github.io/</link><description>Recent content on Youhess's Blog</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Tue, 27 May 2025 00:00:00 +0000</lastBuildDate><atom:link href="http://youhess.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>UdonSharp 同步方法指南</title><link>http://youhess.github.io/p/udonsharo-serialization-json/</link><pubDate>Wed, 07 May 2025 00:00:00 +0000</pubDate><guid>http://youhess.github.io/p/udonsharo-serialization-json/</guid><description>&lt;img src="http://youhess.github.io/p/udonsharo-serialization-json/cover.jpg" alt="Featured image of post UdonSharp 同步方法指南" /&gt;&lt;h1 id="udonsharp-同步方法指南"&gt;UdonSharp 同步方法指南
+&lt;/h1&gt;&lt;h2 id="同步变量"&gt;同步变量
+&lt;/h2&gt;&lt;h3 id="1-同步模式设置"&gt;1. 同步模式设置
+&lt;/h3&gt;&lt;p&gt;在类定义上方添加同步模式属性：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;[UdonBehaviourSyncMode(BehaviourSyncMode.Manual)] // 手动同步
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;[UdonBehaviourSyncMode(BehaviourSyncMode.Continuous)] // 连续同步
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="2-可同步变量标记"&gt;2. 可同步变量标记
+&lt;/h3&gt;&lt;p&gt;使用 &lt;code&gt;[UdonSynced]&lt;/code&gt; 属性标记需要同步的变量：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;[UdonSynced] private int myValue;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;[UdonSynced] private string myText;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;[UdonSynced] private bool myState;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="3-复杂数据类型同步"&gt;3. 复杂数据类型同步
+&lt;/h3&gt;&lt;p&gt;对于复杂数据类型，需要序列化成字符串：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;[UdonSynced] private string serializedData; // 存储序列化后的JSON
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;private DataList myDataList; // 实际使用的数据对象
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="同步方法"&gt;同步方法
+&lt;/h2&gt;&lt;h3 id="1-请求同步"&gt;1. 请求同步
+&lt;/h3&gt;&lt;p&gt;修改变量后，调用请求同步方法将数据发送给所有玩家：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;RequestSerialization();
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="2-监听反序列化"&gt;2. 监听反序列化
+&lt;/h3&gt;&lt;p&gt;当接收到同步数据时，通过此方法处理：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;public override void OnDeserialization()
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;{
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; // 处理同步后的数据
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="3-网络事件"&gt;3. 网络事件
+&lt;/h3&gt;&lt;p&gt;向特定目标或所有玩家发送事件：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;// 发送给所有玩家
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;SendCustomNetworkEvent(NetworkEventTarget.All, &amp;#34;方法名&amp;#34;);
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;// 发送给除自己外的所有玩家
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;SendCustomNetworkEvent(NetworkEventTarget.Others, &amp;#34;方法名&amp;#34;);
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="4-延迟网络事件"&gt;4. 延迟网络事件
+&lt;/h3&gt;&lt;p&gt;设置延迟执行的事件：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;SendCustomEventDelayedSeconds(&amp;#34;方法名&amp;#34;, 延迟秒数);
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="所有权控制"&gt;所有权控制
+&lt;/h2&gt;&lt;h3 id="1-检查所有权"&gt;1. 检查所有权
+&lt;/h3&gt;&lt;p&gt;验证当前玩家是否拥有对象所有权：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;if (Networking.IsOwner(gameObject)) {
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; // 只有拥有所有权的玩家才执行
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="2-获取设置所有权"&gt;2. 获取/设置所有权
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;// 获取当前所有者
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;VRCPlayerApi owner = Networking.GetOwner(gameObject);
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;// 设置所有权（仅当前玩家能设置自己为所有者）
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Networking.SetOwner(Networking.LocalPlayer, gameObject);
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="3-所有权变更监听"&gt;3. 所有权变更监听
+&lt;/h3&gt;&lt;p&gt;监听所有权转移事件：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;public override void OnOwnershipTransferred(VRCPlayerApi player)
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;{
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; // 处理所有权变更逻辑
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="数据同步最佳实践"&gt;数据同步最佳实践
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;所有权检查&lt;/strong&gt;：修改同步变量前验证所有权&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;批量更新&lt;/strong&gt;：一次性修改多个变量后再调用一次 RequestSerialization()&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;数据验证&lt;/strong&gt;：OnDeserialization 中验证数据有效性&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;同步优化&lt;/strong&gt;：使用 Manual 模式减少不必要的网络流量&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;错误处理&lt;/strong&gt;：添加异常情况处理和数据恢复机制&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;通过这些方法，可以实现 UdonSharp 中的高效数据同步，保证多玩家环境下的一致性体验。&lt;/p&gt;
+&lt;h2 id="我的问题"&gt;我的问题
+&lt;/h2&gt;&lt;p&gt;类型转换问题：序列化后 Int 可能变成 Double
+没有原生整数类型：JSON 中所有数字都是浮点数&lt;/p&gt;</description></item><item><title>谁是卧底 VRChat 中文版</title><link>http://youhess.github.io/p/vr-wodi-design/</link><pubDate>Tue, 08 Apr 2025 00:00:00 +0000</pubDate><guid>http://youhess.github.io/p/vr-wodi-design/</guid><description>&lt;img src="http://youhess.github.io/p/vr-wodi-design/cover.jpg" alt="Featured image of post 谁是卧底 VRChat 中文版" /&gt;&lt;h3 id="前言"&gt;前言
+&lt;/h3&gt;&lt;p&gt;“vrchat geoguesser china“ 接近尾声，虽然有许多bug要修改，但是看到vrchat上并没有中文版的“谁是卧底”，就想着趁现在有激情把想法写下来。当然这份文件在后续应该会有改进。实际的完成效果我也不清楚咯。哈哈哈&lt;/p&gt;
+&lt;h3 id="游戏基础设置"&gt;游戏基础设置
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;玩家人数&lt;/strong&gt;：10人上限，游戏开始后不能加入主游戏(所以一开始的时候要求玩家sgin in知道谁加入游戏）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;游戏角色&lt;/strong&gt;：普通玩家和卧底(Imposter)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;等候区域&lt;/strong&gt;：后来者在观众区观看，大屏幕直播当前对局&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="数据结构优化"&gt;数据结构优化
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;span class="lnt"&gt;22
+&lt;/span&gt;&lt;span class="lnt"&gt;23
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-jsx" data-lang="jsx"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// 玩家数据结构
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;let&lt;/span&gt; &lt;span class="nx"&gt;players&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;playerName&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;xxx&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;// 玩家名称
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;playerId&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;xxx&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;// 玩家唯一ID
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;isImposter&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;false&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;// 是否为卧底
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;isOut&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;false&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;// 是否被淘汰
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;cardContent&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Apple&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;// 玩家拿到的词语
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;votes&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;// 当前回合获得的票数
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;canVote&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt; &lt;span class="c1"&gt;// 是否有投票权(被淘汰后为false)
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// 游戏状态数据
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;let&lt;/span&gt; &lt;span class="nx"&gt;gameState&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;isGameActive&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;false&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;// 游戏是否激活
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;currentRound&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;// 当前回合数
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;currentTurnPlayer&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;// 当前回合玩家ID
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;votingPhase&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;false&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;// 是否在投票阶段
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;winners&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;null&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;// 获胜方(&amp;#34;imposter&amp;#34;或&amp;#34;normal&amp;#34;)
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;normalWord&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;苹果&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;// 普通玩家的词
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;imposterWord&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;梨&amp;#34;&lt;/span&gt; &lt;span class="c1"&gt;// 卧底的词
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="游戏流程完善"&gt;游戏流程完善
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;准备阶段&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;房主可以设置游戏参数(卧底人数、每轮描述时间)&lt;/li&gt;
+&lt;li&gt;玩家加入游戏位置&lt;/li&gt;
+&lt;li&gt;房主点击&amp;quot;开始游戏&amp;quot;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;游戏开始&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;系统随机分配卧底和普通玩家&lt;/li&gt;
+&lt;li&gt;系统分发卡牌(只对持有者可见)&lt;/li&gt;
+&lt;li&gt;显示首轮发言玩家(高亮效果)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;游戏轮次&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;描述阶段&lt;/strong&gt;：玩家按顺序描述自己拿到的词语(不能直接说出词语)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;投票阶段&lt;/strong&gt;：所有未淘汰玩家可以投票选择怀疑的卧底&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;结算阶段&lt;/strong&gt;：得票最高者被淘汰(平票则无人淘汰)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;胜利条件&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;普通玩家胜利&lt;/strong&gt;：所有卧底被淘汰&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;卧底胜利&lt;/strong&gt;：卧底数量大于或等于普通玩家数量&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="功能设计增强"&gt;功能设计增强
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;投票系统&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;投票UI：圆形布局，点击玩家头像进行投票&lt;/li&gt;
+&lt;li&gt;投票确认：需确认后提交&lt;/li&gt;
+&lt;li&gt;投票显示：实时显示已投票人数(不显示投给谁)&lt;/li&gt;
+&lt;li&gt;计票：&lt;code&gt;{ playerID1: votesCount1, playerID2: votesCount2, ... }&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;交互设计&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;当前回合高亮：玩家头顶光环效果&lt;/li&gt;
+&lt;li&gt;被淘汰效果：玩家模型变暗/半透明&lt;/li&gt;
+&lt;li&gt;卡牌显示：私人UI只对玩家自己可见&lt;/li&gt;
+&lt;li&gt;游戏状态显示：大屏幕显示当前游戏阶段&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;观战模式&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;观众席：可以看到游戏进行&lt;/li&gt;
+&lt;li&gt;信息限制：观众无法看到词语和卧底身份&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="技术实现建议"&gt;技术实现建议
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;VRChat Udon脚本&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;使用UdonSharp编写逻辑&lt;/li&gt;
+&lt;li&gt;使用同步变量处理多人游戏状态&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;UI设计&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;世界中央大屏：游戏状态和计时器&lt;/li&gt;
+&lt;li&gt;个人UI：词语卡和投票界面&lt;/li&gt;
+&lt;li&gt;房主控制面板：游戏设置和开始按钮&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;性能优化&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;减少同步变量数量&lt;/li&gt;
+&lt;li&gt;设置合理的网络同步频率&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="额外创新功能"&gt;额外创新功能
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;时间限制&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;描述阶段：每人60秒&lt;/li&gt;
+&lt;li&gt;投票阶段：30秒&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;</description></item><item><title>vrchat geoguesser china</title><link>http://youhess.github.io/p/vr-geoguesser-design/</link><pubDate>Tue, 27 May 2025 00:00:00 +0000</pubDate><guid>http://youhess.github.io/p/vr-geoguesser-design/</guid><description>&lt;img src="http://youhess.github.io/p/vr-geoguesser-design/GeoGuesser.jpg" alt="Featured image of post vrchat geoguesser china" /&gt;&lt;h3 id="前言"&gt;前言
+&lt;/h3&gt;&lt;p&gt;这是我开发的一款“VRChat 地理猜图”游戏，玩家需要根据全景图像猜测其地理位置，并将自己的 Pin 拖拽到地图上。项目灵感来源于 Geoguessr，但加入了中文地图、得分系统等自定义设计。我的朋友Oikki对我的游戏开发提供了极为重要的帮助，在这里再次感谢！&lt;/p&gt;
+&lt;h3 id="游戏机制简述"&gt;游戏机制简述
+&lt;/h3&gt;&lt;p&gt;玩家操作：拖动属于自己的 Pin 到地图上进行定位&lt;/p&gt;
+&lt;p&gt;核心流程：展示全景图 → 玩家放置位置 → 答案揭晓 → 计算得分&lt;/p&gt;
+&lt;p&gt;胜利规则：在多轮游戏后总得分最高者胜出&lt;/p&gt;
+&lt;h3 id="技术实现"&gt;技术实现
+&lt;/h3&gt;&lt;h4 id="坐标映射系统"&gt;坐标映射系统
+&lt;/h4&gt;&lt;p&gt;使用 LatLongMapper 将地图 UI 坐标与实际经纬度进行双向映射&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-jsx" data-lang="jsx"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;Vector2&lt;/span&gt; &lt;span class="nx"&gt;LatLongToUICoords&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;Vector2&lt;/span&gt; &lt;span class="nx"&gt;latLong&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="c1"&gt;// 经纬度 → UI坐标
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;Vector2&lt;/span&gt; &lt;span class="nx"&gt;UICoordsToLatLong&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;Vector2&lt;/span&gt; &lt;span class="nx"&gt;position&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="c1"&gt;// UI坐标 → 经纬度
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h4 id="玩家-pin-控制"&gt;玩家 Pin 控制
+&lt;/h4&gt;&lt;p&gt;每位玩家使用 Cyan.PlayerObjectPool 分配一个 Pin（GameObject）&lt;/p&gt;
+&lt;p&gt;使用 Networking.GetOwner() 限定拾取权限&lt;/p&gt;
+&lt;p&gt;仅本地玩家可见自己的 Pin，非 owner 设置为透明状态&lt;/p&gt;
+&lt;p&gt;放置检测通过与 MapTable 碰撞触发逻辑判断是否在地图范围内PinController&lt;/p&gt;
+&lt;h4 id="数据管理系统"&gt;数据管理系统
+&lt;/h4&gt;&lt;p&gt;PinDataManager 使用 UdonSynced + VRCJson 实现跨客户端同步玩家的经纬度数据&lt;/p&gt;
+&lt;p&gt;每轮玩家猜测被存储为 DataList，每个回合自动序列化/反序列化数据PinDataManager&lt;/p&gt;
+&lt;p&gt;最终得分通过与正确坐标的欧几里得距离计算出，采用非线性函数平滑处理分数&lt;/p&gt;
+&lt;h4 id="地图与答案"&gt;地图与答案
+&lt;/h4&gt;&lt;p&gt;正确答案存储在 LocationRoundData.cs 中，预先导入 json 文件&lt;/p&gt;
+&lt;p&gt;每轮显示的全景图与答案位置通过 imageUrls[] 和 locationDataList[] 对应LocationRoundData&lt;/p&gt;
+&lt;h4 id="得分逻辑"&gt;得分逻辑
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-jsx" data-lang="jsx"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;float&lt;/span&gt; &lt;span class="nx"&gt;distance&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;Vector2&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Distance&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;correct&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;guess&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;float&lt;/span&gt; &lt;span class="nx"&gt;score&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;distance&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="nx"&gt;f&lt;/span&gt; &lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="mi"&gt;95&lt;/span&gt;&lt;span class="o"&gt;~&lt;/span&gt;&lt;span class="mi"&gt;100&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;Mathf&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Max&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;95&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="nx"&gt;pow&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;normalized&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)));&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;放置不合法（未命中地图）得分为 0&lt;/p&gt;
+&lt;p&gt;支持对 每轮成绩 和 最终总分 进行排序展示&lt;/p&gt;
+&lt;h4 id="多人同步与网络优化"&gt;多人同步与网络优化
+&lt;/h4&gt;&lt;p&gt;房主负责开始游戏并推进阶段（准备 / 猜测 / 揭晓）&lt;/p&gt;
+&lt;p&gt;OnDeserialization 中 UI 状态恢复 + 图片同步处理&lt;/p&gt;
+&lt;p&gt;RequestSerialization + SendCustomNetworkEvent 用于状态广播与视图更新&lt;/p&gt;
+&lt;h4 id="音效交互"&gt;音效交互
+&lt;/h4&gt;&lt;p&gt;不同阶段播放不同 AudioClip（按钮音、倒计时音、揭晓音）&lt;/p&gt;</description></item><item><title>Archives</title><link>http://youhess.github.io/archives/</link><pubDate>Sun, 06 Mar 2022 00:00:00 +0000</pubDate><guid>http://youhess.github.io/archives/</guid><description/></item><item><title>Links</title><link>http://youhess.github.io/links/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://youhess.github.io/links/</guid><description>&lt;p&gt;To use this feature, add &lt;code&gt;links&lt;/code&gt; section to frontmatter.&lt;/p&gt;
+&lt;p&gt;This page&amp;rsquo;s frontmatter:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;span class="lnt"&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;links&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;title&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;GitHub&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;description&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;GitHub is the world&amp;#39;s largest software development platform.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;website&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;https://github.com&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;image&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;title&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;TypeScript&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;description&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;TypeScript is a typed superset of JavaScript that compiles to plain JavaScript.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;website&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;https://www.typescriptlang.org&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;image&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;ts-logo-128.jpg&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;code&gt;image&lt;/code&gt; field accepts both local and external images.&lt;/p&gt;</description></item><item><title>Search</title><link>http://youhess.github.io/search/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://youhess.github.io/search/</guid><description/></item></channel></rss>
