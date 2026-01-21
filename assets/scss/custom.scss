@@ -1,3 +1,70 @@
 /*
     You can add your own custom styles here.
 */
+
+:root {
+    --card-border-radius: 16px;
+}
+
+/* 1. 增强卡片质感：圆角与阴影 */
+.article-list--compact article,
+.article-wrapper,
+.widget {
+    border-radius: var(--card-border-radius) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+/* 2. 交互动效：鼠标悬停时卡片上浮 */
+.article-list--compact article:hover,
+.widget:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12) !important;
+}
+
+/* 3. 个性化滚动条 */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.4);
+}
+
+/* 4. 文章内链接动画效果 */
+.article-content a {
+    text-decoration: none !important;
+    background-image: linear-gradient(var(--card-background), var(--card-background)), 
+                      linear-gradient(var(--primary), var(--primary));
+    background-size: 100% 2px, 0 2px;
+    background-position: 100% 100%, 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.3s linear;
+}
+
+.article-content a:hover {
+    background-size: 0 2px, 100% 2px;
+}
+
+/* 5. 选中文字效果 */
+::selection {
+    background: var(--primary);
+    color: #fff;
+}
+
+/* 6. 侧边栏头像微调：更加圆形且带边框 */
+.sidebar header .site-avatar .site-logo {
+    border-radius: 50%;
+    border: 2px solid var(--primary);
+    padding: 2px;
+}
