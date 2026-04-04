@@ -1,0 +1,81 @@
+<nav class="site-navbar">
+    <div class="navbar-inner">
+        <!-- Logo & Title Section -->
+        <div class="navbar-brand">
+            <a href="{{ .Site.BaseURL | relLangURL }}" class="navbar-logo">
+                {{ with .Site.Params.sidebar.avatar }}
+                    {{ if (default true .enabled) }}
+                        {{ if not .local }}
+                            <img src="{{ .src }}" class="navbar-avatar" alt="Avatar">
+                        {{ else }}
+                            {{ $avatar := resources.Get (.src) }}
+                            {{ if $avatar }}
+                                {{ $avatarResized := $avatar.Resize "40x" }}
+                                <img src="{{ $avatarResized.RelPermalink }}" class="navbar-avatar" alt="Avatar">
+                            {{ end }}
+                        {{ end }}
+                    {{ end }}
+                {{ end }}
+                <span class="navbar-title">{{ .Site.Title }}</span>
+            </a>
+        </div>
+
+        <!-- Menu Section -->
+        <div class="navbar-menu">
+            {{ $currentPage := . }}
+            {{ range .Site.Menus.main }}
+                {{ $active := or (eq $currentPage.Title .Name) (or ($currentPage.HasMenuCurrent "main" .) ($currentPage.IsMenuCurrent "main" .)) }}
+                <a href='{{ .URL }}' class="navbar-item {{ if $active }}active{{ end }}" 
+                   {{ if eq .Params.newTab true }}target="_blank"{{ end }}>
+                    {{ $icon := default .Pre .Params.Icon }}
+                    {{ with $icon }}
+                        {{ partial "helper/icon" . }}
+                    {{ end }}
+                    <span>{{- .Name -}}</span>
+                </a>
+            {{ end }}
+        </div>
+
+        <!-- Right Section -->
+        <div class="navbar-right">
+            <!-- Social Links -->
+            {{- with .Site.Menus.social -}}
+                <div class="navbar-social">
+                    {{ range . }}
+                        <a href='{{ .URL }}' 
+                           {{ if eq (default true .Params.newTab) true }}target="_blank"{{ end }}
+                           {{ with .Name }}title="{{ . }}"{{ end }}
+                           rel="me"
+                           class="navbar-social-icon">
+                            {{ $icon := default "link" .Params.Icon }}
+                            {{ with $icon }}
+                                {{ partial "helper/icon" . }}
+                            {{ end }}
+                        </a>
+                    {{ end }}
+                </div>
+            {{- end -}}
+
+            <!-- Settings -->
+            <div class="navbar-settings">
+                {{- $currentLanguageCode := .Language.Lang -}}
+                {{ if ( compare.Gt .Site.Home.AllTranslations.Len 1 ) }}
+                    {{ with .Site.Home.AllTranslations }}
+                        <select id="navbar-language" title="language" onchange="window.location.href = this.selectedOptions[0].value">
+                            {{ range . }}
+                                <option value="{{ .Permalink }}" {{ if eq .Language.Lang $currentLanguageCode }}selected{{ end }}>{{ .Language.LanguageName }}</option>
+                            {{ end }}
+                        </select>
+                    {{ end }}
+                {{ end }}
+
+                {{ if (default false .Site.Params.colorScheme.toggle) }}
+                    <button id="dark-mode-toggle" class="navbar-btn" aria-label="Toggle dark mode">
+                        {{ partial "helper/icon" "toggle-left" }}
+                        {{ partial "helper/icon" "toggle-right" }}
+                    </button>
+                {{ end }}
+            </div>
+        </div>
+    </div>
+</nav>

@@ -1,3 +1,160 @@
 /*
     You can add your own custom styles here.
 */
+
+:root {
+    --navbar-height: 70px;
+    --sidebar-sticky-offset: calc(var(--navbar-height) + 12px);
+}
+
+/* Top Navigation Bar Styles */
+.site-navbar {
+    background-color: var(--card-background);
+    border-bottom: 1px solid var(--card-separator-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow-l1);
+}
+
+.navbar-inner {
+    position: relative;
+    max-width: 100%;
+    padding: 0 20px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: var(--card-text-color-main);
+    font-weight: 700;
+    font-size: 1.3rem;
+    transition: color 0.3s ease;
+
+    &:hover {
+        color: var(--accent-color);
+    }
+}
+
+.navbar-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.navbar-menu {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.navbar-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    color: var(--card-text-color-secondary);
+    padding: 6px 12px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+
+    &:hover {
+        color: var(--accent-color);
+    }
+
+    &.active {
+        color: var(--accent-color);
+        font-weight: 600;
+    }
+}
+
+.navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.navbar-social {
+    display: flex;
+    gap: 15px;
+}
+
+.navbar-social-icon {
+    color: var(--card-text-color-secondary);
+    transition: color 0.3s ease;
+
+    &:hover {
+        color: var(--accent-color);
+    }
+}
+
+.navbar-settings {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.navbar-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--card-text-color-secondary);
+    transition: color 0.3s ease;
+
+    &:hover {
+        color: var(--accent-color);
+    }
+}
+
+@media (max-width: 768px) {
+    :root {
+        --navbar-height: 60px;
+    }
+
+    .navbar-menu {
+        display: none;
+    }
+
+    .navbar-inner {
+        height: 60px;
+    }
+}
+
+/* Keep main and right sidebar in a fixed ratio on desktop */
+@media (min-width: 1024px) {
+    .main-container {
+        --main-ratio: 7;
+        --right-ratio: 3;
+        --layout-total-ratio: calc(var(--main-ratio) + var(--right-ratio));
+    }
+
+    .main-container main.main.full-width {
+        width: auto;
+        flex: 0 1 calc((100% - var(--section-separation)) * var(--main-ratio) / var(--layout-total-ratio));
+        max-width: calc((100% - var(--section-separation)) * var(--main-ratio) / var(--layout-total-ratio));
+    }
+
+    .main-container .right-sidebar {
+        flex: 0 0 calc((100% - var(--section-separation)) * var(--right-ratio) / var(--layout-total-ratio));
+        max-width: calc((100% - var(--section-separation)) * var(--right-ratio) / var(--layout-total-ratio));
+    }
+
+    .main-container .right-sidebar.sticky {
+        top: var(--sidebar-sticky-offset);
+    }
+}
