@@ -1,0 +1,12 @@
+{{- $pages := where .Site.RegularPages "Type" "in" .Site.Params.mainSections -}}
+{{- $notHidden := where .Site.RegularPages "Params.hidden" "!=" true -}}
+{{- $filtered := ($pages | intersect $notHidden) -}}
+
+{{- $result := slice -}}
+
+{{- range $filtered -}}
+    {{- $data := dict "title" .Title "date" .Date "permalink" .Permalink "content" (.Plain) -}}
+    {{- $result = $result | append $data -}}
+{{- end -}}
+
+{{ jsonify $result }}
