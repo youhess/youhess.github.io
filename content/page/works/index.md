@@ -51,9 +51,17 @@ sections:
       - title: "Look and Senses — Editorial Product Landing"
         details: "Minimal, grid-based editorial layout with generous whitespace and material-driven backgrounds. Focused on premium storytelling through product photography and controlled pacing."
         image: "images/look-and-senses.png"
-        link: "https://youhess.github.io/Fragrant-Living-Website/"
+        link: "https://youhess.github.io/Clone-Fragrant-Living-Website/"
       - title: "Norwegian Rain — Fashion Brand Homepage"
         details: "Fashion brand homepage featuring seasonal hero banners, modular content sections, a popular-products grid, and brand story blocks."
         image: "images/norwegian-rain.png"
-        link: "https://youhess.github.io/Nordic-Minimalist-Fashion-Website/"
+        link: "https://youhess.github.io/Clone-Nordic-Minimalist-Fashion/"
+      - title: "Douce Maison — Lifestyle & Fashion E-commerce Homepage"
+        details: >-
+          Elegant e-commerce homepage with seasonal hero sliders, curated collection
+          recommendations, weekly picks product carousels, featured split-story
+          sections, loyalty program highlights, and Instagram-inspired social proof
+          blocks.
+        image: "images/Clone-Douce-Maison.png"
+        link: "https://youhess.github.io/Clone-Douce-Maison/"
 ---
