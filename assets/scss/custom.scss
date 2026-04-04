@@ -157,4 +157,248 @@
     .main-container .right-sidebar.sticky {
         top: var(--sidebar-sticky-offset);
     }
+
+    /* Decouple works page from the global 7:3 layout */
+    .template-works .main-container {
+        justify-content: center;
+    }
+
+    .template-works .main-container .right-sidebar {
+        display: none;
+    }
+
+    .template-works .main-container main.main.full-width {
+        width: 100%;
+        flex: 0 1 1200px;
+        max-width: 1200px;
+        margin-inline: auto;
+    }
+}
+
+/* Works page */
+.template-works .works-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(240px, 0.75fr);
+    gap: 24px;
+    align-items: center;
+    padding: 28px;
+    border-radius: 24px;
+    background:
+        radial-gradient(circle at top right, rgba(255, 183, 77, 0.18), transparent 34%),
+        linear-gradient(135deg, color-mix(in srgb, var(--card-background) 92%, #fff 8%), var(--card-background));
+    border: 1px solid var(--card-separator-color);
+    box-shadow: var(--shadow-l1);
+}
+
+.template-works .works-kicker {
+    margin: 0 0 10px;
+    color: var(--accent-color);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+}
+
+.template-works .works-title {
+    margin: 0;
+    font-size: clamp(2.1rem, 4vw, 3.8rem);
+    line-height: 1.05;
+}
+
+.template-works .works-subtitle {
+    margin: 14px 0 0;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--card-text-color-main);
+}
+
+.template-works .works-tagline {
+    margin: 14px 0 0;
+    max-width: 68ch;
+    color: var(--card-text-color-secondary);
+    line-height: 1.7;
+}
+
+.template-works .works-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.template-works .works-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.8rem 1.1rem;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.template-works .works-action:hover {
+    transform: translateY(-2px);
+}
+
+.template-works .works-action--brand {
+    color: var(--body-background);
+    background: var(--accent-color);
+    box-shadow: 0 10px 24px color-mix(in srgb, var(--accent-color) 30%, transparent);
+}
+
+.template-works .works-action--alt {
+    color: var(--card-text-color-main);
+    background: color-mix(in srgb, var(--card-background) 80%, transparent);
+    border-color: var(--card-separator-color);
+}
+
+.template-works .works-hero__media {
+    min-height: 100%;
+}
+
+.template-works .works-hero__media img,
+.template-works .works-hero__fallback {
+    width: 100%;
+    min-height: 260px;
+    border-radius: 20px;
+    object-fit: cover;
+    background:
+        linear-gradient(160deg, color-mix(in srgb, var(--accent-color) 22%, transparent), transparent 58%),
+        linear-gradient(135deg, #111827, #374151);
+    box-shadow: var(--shadow-l2);
+}
+
+.template-works .works-hero__fallback {
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-size: clamp(1.4rem, 3vw, 2.25rem);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-align: center;
+    padding: 24px;
+}
+
+.template-works .works-section {
+    max-width: 1100px;
+    margin: 34px auto 0;
+}
+
+.template-works .works-section__header {
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.template-works .works-section__title {
+    margin: 0;
+    font-size: 3rem;
+}
+
+.template-works .works-section__subtitle {
+    margin: 8px 0 0;
+    color: var(--card-text-color-secondary);
+}
+
+.template-works .works-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px;
+    align-items: stretch;
+}
+
+.template-works .project-card {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    text-decoration: none;
+    border-radius: 20px;
+    background: var(--card-background);
+    border: 1px solid var(--card-separator-color);
+    box-shadow: var(--shadow-l1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.template-works .project-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-l2);
+    border-color: color-mix(in srgb, var(--accent-color) 24%, var(--card-separator-color));
+}
+
+.template-works .project-card__media {
+    aspect-ratio: 16 / 10;
+    background-color: #243042;
+    background-size: cover;
+    background-position: center;
+}
+
+.template-works .project-card__media--fallback {
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    color: rgba(255, 255, 255, 0.9);
+    text-align: center;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    background-image:
+        linear-gradient(135deg, color-mix(in srgb, var(--accent-color) 32%, #0f172a), #243b53),
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.18), transparent 42%);
+}
+
+.template-works .project-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+    padding: 18px 18px 20px;
+}
+
+.template-works .project-card__title {
+    margin: 0;
+    font-size: 1.1rem;
+    line-height: 1.35;
+    min-height: calc(1.35em * 2);
+}
+
+.template-works .project-card__details {
+    margin: 0;
+    color: var(--card-text-color-secondary);
+    line-height: 1.65;
+    flex: 1;
+}
+
+.template-works .project-card__cta {
+    color: var(--accent-color);
+    font-weight: 700;
+    margin-top: 6px;
+    align-self: flex-start;
+}
+
+@media (min-width: 1024px) {
+    .template-works .works-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 920px) {
+    .template-works .works-hero {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .template-works .works-hero {
+        padding: 20px;
+    }
+
+    .template-works .works-hero__media img,
+    .template-works .works-hero__fallback {
+        min-height: 220px;
+    }
+
+    .template-works .works-grid {
+        grid-template-columns: 1fr;
+    }
 }

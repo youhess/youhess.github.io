@@ -1,0 +1,55 @@
+{{ define "body-class" }}template-works{{ end }}
+
+{{ define "main" }}
+    {{ $page := . }}
+    {{ $hero := .Params.hero }}
+    
+    {{ range .Params.sections }}
+        <section class="works-section">
+            <header class="works-section__header">
+                <h2 class="works-section__title">{{ .title }}</h2>
+                {{ with .subtitle }}<p class="works-section__subtitle">{{ . }}</p>{{ end }}
+            </header>
+
+            <div class="works-grid">
+                {{ range .items }}
+                    {{ $card := . }}
+                    {{ $cardImage := "" }}
+                    {{ with $card.image }}
+                        {{ if hasPrefix . "http" }}
+                            {{ $cardImage = . }}
+                        {{ else if hasPrefix . "/" }}
+                            {{ $cardImage = . | relURL }}
+                        {{ else }}
+                            {{ $resourcePath := replaceRE "^\\./" "" . }}
+                            {{ with $.Resources.GetMatch $resourcePath }}
+                                {{ $cardImage = .RelPermalink }}
+                            {{ else }}
+                                {{ with resources.Get $resourcePath }}
+                                    {{ $cardImage = .RelPermalink }}
+                                {{ end }}
+                            {{ end }}
+                        {{ end }}
+                    {{ end }}
+
+                    {{ $isExternal := hasPrefix $card.link "http" }}
+                    <a class="project-card" href="{{ $card.link }}"{{ if $isExternal }} target="_blank" rel="noopener noreferrer"{{ end }}>
+                        <div class="project-card__media{{ if not $cardImage }} project-card__media--fallback{{ end }}"{{ with $cardImage }} style="background-image: url('{{ . }}')"{{ end }}>
+                            {{ if not $cardImage }}
+                                <span>{{ $card.title }}</span>
+                            {{ end }}
+                        </div>
+
+                        <div class="project-card__body">
+                            <h3 class="project-card__title">{{ $card.title }}</h3>
+                            <p class="project-card__details">{{ $card.details }}</p>
+                            <span class="project-card__cta">View project</span>
+                        </div>
+                    </a>
+                {{ end }}
+            </div>
+        </section>
+    {{ end }}
+
+    {{ partialCached "footer/footer" . }}
+{{ end }}
