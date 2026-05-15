@@ -3,7 +3,7 @@
   "baseUrl": ".",
   "paths": {
    "*": [
-    "..\\_vendor\\github.com\\CaiJimmy\\hugo-theme-stack\\v3\\assets\\*"
+    "../_vendor/github.com/CaiJimmy/hugo-theme-stack/v3/assets/*"
    ]
   }
  }

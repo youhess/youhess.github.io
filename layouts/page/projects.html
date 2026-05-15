@@ -1,0 +1,114 @@
+{{ define "body-class" }}template-projects{{ end }}
+
+{{ define "main" }}
+    <section class="projects-page" aria-labelledby="projects-title">
+        <header class="projects-hero">
+            <div class="projects-hero__mark" aria-hidden="true">
+                {{ partial "helper/icon" "briefcase" }}
+            </div>
+            <div class="projects-hero__copy">
+                <div class="projects-hero__title-row">
+                    <h1 id="projects-title">项目经历</h1>
+                    {{ with .Params.intro.eyebrow }}<span>{{ . }}</span>{{ end }}
+                </div>
+                {{ with .Params.intro.description }}<p>{{ . }}</p>{{ end }}
+            </div>
+        </header>
+
+        <div class="projects-timeline">
+            {{ range .Params.projects }}
+                <article class="experience-card">
+                    <span class="experience-card__dot" aria-hidden="true"></span>
+                    <header class="experience-card__header">
+                        <div class="experience-card__icon experience-card__icon--{{ .icon }}" aria-hidden="true">
+                            {{ if eq .icon "analytics" }}
+                                <svg viewBox="0 0 24 24" role="img" focusable="false">
+                                    <path d="M4 4h16v12H4z"></path>
+                                    <path d="M8 20h8"></path>
+                                    <path d="M12 16v4"></path>
+                                    <path d="m7 12 3-3 3 2 4-5"></path>
+                                    <path d="M7 14h10"></path>
+                                </svg>
+                            {{ else if eq .icon "mobile" }}
+                                <svg viewBox="0 0 24 24" role="img" focusable="false">
+                                    <path d="M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path>
+                                    <path d="M10 18h4"></path>
+                                    <path d="M9 5h6"></path>
+                                </svg>
+                            {{ else }}
+                                <svg viewBox="0 0 24 24" role="img" focusable="false">
+                                    <path d="M17.5 18H8a5 5 0 1 1 1-9.9 6 6 0 0 1 11 3.3A3.5 3.5 0 0 1 17.5 18z"></path>
+                                    <path d="M12 12v8"></path>
+                                    <path d="m8.5 15.5 3.5-3.5 3.5 3.5"></path>
+                                </svg>
+                            {{ end }}
+                        </div>
+
+                        <div class="experience-card__meta">
+                            <h2>
+                                {{ .title }}
+                                {{ with .type }}<span class="experience-card__badge">{{ . }}</span>{{ end }}
+                            </h2>
+                            <p>{{ .summary }}</p>
+                        </div>
+
+                        {{ with .period }}
+                            <div class="experience-card__date">
+                                {{ partial "helper/icon" "date" }}
+                                <span>{{ . }}</span>
+                            </div>
+                        {{ end }}
+                    </header>
+
+                    <div class="experience-card__content">
+                        {{ with .responsibility }}
+                            <section class="experience-block">
+                                <h3>{{ .title }}</h3>
+                                <div class="experience-block__body">
+                                    <p>{{ .headline }}</p>
+                                    <ul>
+                                        {{ range .items }}<li>{{ . }}</li>{{ end }}
+                                    </ul>
+                                </div>
+                            </section>
+                        {{ end }}
+
+                        {{ with .outcome }}
+                            <section class="experience-block">
+                                <h3>{{ .title }}</h3>
+                                <div class="experience-block__body">
+                                    <p>{{ .headline }}</p>
+                                    <ul>
+                                        {{ range .items }}<li>{{ . }}</li>{{ end }}
+                                    </ul>
+                                </div>
+                            </section>
+                        {{ end }}
+
+                        {{ with .stack }}
+                            <section class="experience-block experience-block--stack">
+                                <h3>技术栈</h3>
+                                <div class="experience-tags">
+                                    {{ range . }}<span>{{ . }}</span>{{ end }}
+                                </div>
+                            </section>
+                        {{ end }}
+                    </div>
+                </article>
+            {{ end }}
+        </div>
+
+        {{ with .Params.closing }}
+            <footer class="projects-closing">
+                <svg aria-hidden="true" viewBox="0 0 24 24">
+                    <path d="M9 18h6"></path>
+                    <path d="M10 22h4"></path>
+                    <path d="M8.5 15.5A6 6 0 1 1 15.5 15.5c-.7.5-1.1 1.3-1.2 2.1h-4.6c-.1-.8-.5-1.6-1.2-2.1z"></path>
+                </svg>
+                <p>{{ . }}</p>
+            </footer>
+        {{ end }}
+    </section>
+
+    {{ partialCached "footer/footer" . }}
+{{ end }}
