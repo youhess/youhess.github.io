@@ -16,7 +16,7 @@ projects:
     type: "前端开发"
     period: "2025.10 - 至今"
     icon: "mobile"
-    summary: "面向工业温控设备的移动端离线运维 App，支持 BLE 蓝牙连接、实时数据读取、参数配置、ECO 设置、固件升级与历史文件导出。项目基于 uni-app、Vue2 与 uView 开发，通过 BLE 与设备进行 Modbus RTU 协议通信，满足无网络环境下的设备调试与维护需求。"
+    summary: "面向工业温控设备的移动端运维 App，支持 BLE 蓝牙连接、实时数据读取、参数配置、固件升级与历史文件导出。项目基于 uni-app、Vue2 与 uView 开发，通过 BLE 与设备进行 Modbus RTU 协议通信，满足无网络环境下的设备调试与维护需求。"
     responsibility:
       title: "个人职责"
       headline: "核心页面开发、蓝牙通信封装、Modbus 数据读写、多型号配置适配与 OTA 升级"
@@ -41,10 +41,9 @@ projects:
       - "Vue2"
       - "Vuex"
       - "uView"
-      - "BLE 蓝牙"
-      - "Modbus RTU"
+      - "BLE"
+      - "Modbus"
       - "SQLite"
       - "vue-i18n"
-      - "XModem"
 closing: ""
 ---
