@@ -13,7 +13,7 @@ intro:
   description: ""
 projects:
   - title: "2026年杭州市人工智能训练师（数据标注员）职业技能竞赛"
-    type: "一等奖"
+    type: "一等奖 / 市级荣誉"
     period: "2026.05"
     icon: "analytics"
     summary: "参加2026年杭州市人工智能训练师（数据标注员）职业技能竞赛并获得一等奖，获杭州市总工会认定为“杭州市职工经济技术创新能手”。
@@ -22,6 +22,7 @@ projects:
       alt: "2026年杭州市人工智能训练师（数据标注员）职业技能竞赛参赛人员合影"
       caption: "媒体引用：潮新闻《2026年杭州市人工智能训练师职业技能竞赛圆满落幕》"
       source: "https://tidenews.com.cn/news.html?id=3457724"
+    stackTitle: "能力覆盖"
     stack:
       - "人工智能训练"
       - "数据采集与清洗"
