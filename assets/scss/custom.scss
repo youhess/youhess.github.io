@@ -631,6 +631,36 @@
     padding-top: 24px;
 }
 
+.template-projects .experience-card__media {
+    margin: 24px 0 0;
+}
+
+.template-projects .experience-card__media img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #d8e2f0;
+    background: #eef3fb;
+}
+
+.template-projects .experience-card__media figcaption {
+    margin-top: 9px;
+    color: var(--projects-muted);
+    font-size: 0.96rem;
+    line-height: 1.6;
+}
+
+.template-projects .experience-card__media figcaption a {
+    color: var(--projects-blue-deep);
+    text-decoration: none;
+}
+
+.template-projects .experience-card__media figcaption a:hover {
+    text-decoration: underline;
+}
+
 .template-projects .experience-block {
     display: grid;
     grid-template-columns: 100px minmax(0, 1fr);

@@ -8,7 +8,7 @@
             </div>
             <div class="projects-hero__copy">
                 <div class="projects-hero__title-row">
-                    <h1 id="projects-title">项目经历</h1>
+                    <h1 id="projects-title">经历</h1>
                     {{ with .Params.intro.eyebrow }}<span>{{ . }}</span>{{ end }}
                 </div>
                 {{ with .Params.intro.description }}<p>{{ . }}</p>{{ end }}
@@ -17,6 +17,7 @@
 
         <div class="projects-timeline">
             {{ range .Params.projects }}
+                {{ $project := . }}
                 <article class="experience-card">
                     <span class="experience-card__dot" aria-hidden="true"></span>
                     <header class="experience-card__header">
@@ -60,6 +61,20 @@
                         {{ end }}
                     </header>
 
+                    {{ with .media }}
+                        {{ $media := . }}
+                        <figure class="experience-card__media">
+                            {{ if .source }}<a href="{{ .source }}" target="_blank" rel="noopener noreferrer">{{ end }}
+                                <img src="{{ .image }}" alt="{{ .alt }}">
+                            {{ if .source }}</a>{{ end }}
+                            {{ with .caption }}
+                                <figcaption>
+                                    {{ if $media.source }}<a href="{{ $media.source }}" target="_blank" rel="noopener noreferrer">{{ . }}</a>{{ else }}{{ . }}{{ end }}
+                                </figcaption>
+                            {{ end }}
+                        </figure>
+                    {{ end }}
+
                     <div class="experience-card__content">
                         {{ with .responsibility }}
                             <section class="experience-block">
@@ -87,7 +102,7 @@
 
                         {{ with .stack }}
                             <section class="experience-block experience-block--stack">
-                                <h3>技术栈</h3>
+                                <h3>{{ default "技术栈" $project.stackTitle }}</h3>
                                 <div class="experience-tags">
                                     {{ range . }}<span>{{ . }}</span>{{ end }}
                                 </div>
