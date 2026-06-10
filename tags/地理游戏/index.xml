@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>地理游戏 on Youhess's Blog</title><link>http://youhess.github.io/tags/%E5%9C%B0%E7%90%86%E6%B8%B8%E6%88%8F/</link><description>Recent content in 地理游戏 on Youhess's Blog</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Tue, 27 May 2025 00:00:00 +0000</lastBuildDate><atom:link href="http://youhess.github.io/tags/%E5%9C%B0%E7%90%86%E6%B8%B8%E6%88%8F/index.xml" rel="self" type="application/rss+xml"/><item><title>vrchat geoguesser china</title><link>http://youhess.github.io/p/vr-geoguesser-design/</link><pubDate>Tue, 27 May 2025 00:00:00 +0000</pubDate><guid>http://youhess.github.io/p/vr-geoguesser-design/</guid><description>&lt;img src="http://youhess.github.io/p/vr-geoguesser-design/GeoGuesser.jpg" alt="Featured image of post vrchat geoguesser china" /&gt;&lt;h3 id="前言"&gt;前言
+&lt;/h3&gt;&lt;p&gt;这是我开发的一款“VRChat 地理猜图”游戏，玩家需要根据全景图像猜测其地理位置，并将自己的 Pin 拖拽到地图上。项目灵感来源于 Geoguessr，但加入了中文地图、得分系统等自定义设计。我的朋友Oikki对我的游戏开发提供了极为重要的帮助，在这里再次感谢！&lt;/p&gt;
+&lt;h3 id="游戏机制简述"&gt;游戏机制简述
+&lt;/h3&gt;&lt;p&gt;玩家操作：拖动属于自己的 Pin 到地图上进行定位&lt;/p&gt;
+&lt;p&gt;核心流程：展示全景图 → 玩家放置位置 → 答案揭晓 → 计算得分&lt;/p&gt;
+&lt;p&gt;胜利规则：在多轮游戏后总得分最高者胜出&lt;/p&gt;
+&lt;h3 id="技术实现"&gt;技术实现
+&lt;/h3&gt;&lt;h4 id="坐标映射系统"&gt;坐标映射系统
+&lt;/h4&gt;&lt;p&gt;使用 LatLongMapper 将地图 UI 坐标与实际经纬度进行双向映射&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-jsx" data-lang="jsx"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;Vector2&lt;/span&gt; &lt;span class="nx"&gt;LatLongToUICoords&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;Vector2&lt;/span&gt; &lt;span class="nx"&gt;latLong&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="c1"&gt;// 经纬度 → UI坐标
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;Vector2&lt;/span&gt; &lt;span class="nx"&gt;UICoordsToLatLong&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;Vector2&lt;/span&gt; &lt;span class="nx"&gt;position&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="c1"&gt;// UI坐标 → 经纬度
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h4 id="玩家-pin-控制"&gt;玩家 Pin 控制
+&lt;/h4&gt;&lt;p&gt;每位玩家使用 Cyan.PlayerObjectPool 分配一个 Pin（GameObject）&lt;/p&gt;
+&lt;p&gt;使用 Networking.GetOwner() 限定拾取权限&lt;/p&gt;
+&lt;p&gt;仅本地玩家可见自己的 Pin，非 owner 设置为透明状态&lt;/p&gt;
+&lt;p&gt;放置检测通过与 MapTable 碰撞触发逻辑判断是否在地图范围内PinController&lt;/p&gt;
+&lt;h4 id="数据管理系统"&gt;数据管理系统
+&lt;/h4&gt;&lt;p&gt;PinDataManager 使用 UdonSynced + VRCJson 实现跨客户端同步玩家的经纬度数据&lt;/p&gt;
+&lt;p&gt;每轮玩家猜测被存储为 DataList，每个回合自动序列化/反序列化数据PinDataManager&lt;/p&gt;
+&lt;p&gt;最终得分通过与正确坐标的欧几里得距离计算出，采用非线性函数平滑处理分数&lt;/p&gt;
+&lt;h4 id="地图与答案"&gt;地图与答案
+&lt;/h4&gt;&lt;p&gt;正确答案存储在 LocationRoundData.cs 中，预先导入 json 文件&lt;/p&gt;
+&lt;p&gt;每轮显示的全景图与答案位置通过 imageUrls[] 和 locationDataList[] 对应LocationRoundData&lt;/p&gt;
+&lt;h4 id="得分逻辑"&gt;得分逻辑
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-jsx" data-lang="jsx"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;float&lt;/span&gt; &lt;span class="nx"&gt;distance&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;Vector2&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Distance&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;correct&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;guess&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;float&lt;/span&gt; &lt;span class="nx"&gt;score&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;distance&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="nx"&gt;f&lt;/span&gt; &lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="mi"&gt;95&lt;/span&gt;&lt;span class="o"&gt;~&lt;/span&gt;&lt;span class="mi"&gt;100&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;Mathf&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Max&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;95&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="nx"&gt;pow&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;normalized&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)));&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;放置不合法（未命中地图）得分为 0&lt;/p&gt;
+&lt;p&gt;支持对 每轮成绩 和 最终总分 进行排序展示&lt;/p&gt;
+&lt;h4 id="多人同步与网络优化"&gt;多人同步与网络优化
+&lt;/h4&gt;&lt;p&gt;房主负责开始游戏并推进阶段（准备 / 猜测 / 揭晓）&lt;/p&gt;
+&lt;p&gt;OnDeserialization 中 UI 状态恢复 + 图片同步处理&lt;/p&gt;
+&lt;p&gt;RequestSerialization + SendCustomNetworkEvent 用于状态广播与视图更新&lt;/p&gt;
+&lt;h4 id="音效交互"&gt;音效交互
+&lt;/h4&gt;&lt;p&gt;不同阶段播放不同 AudioClip（按钮音、倒计时音、揭晓音）&lt;/p&gt;</description></item></channel></rss>
