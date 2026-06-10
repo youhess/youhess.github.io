@@ -1,5 +1,5 @@
 ---
-title: "经历"
+title: "events"
 slug: "projects"
 layout: "projects"
 comments: false
@@ -13,16 +13,15 @@ intro:
   description: ""
 projects:
   - title: "2026年杭州市人工智能训练师（数据标注员）职业技能竞赛"
-    type: "一等奖 / 市级荣誉"
+    type: "一等奖"
     period: "2026.05"
     icon: "analytics"
-    summary: "参加2026年杭州市人工智能训练师（数据标注员）职业技能竞赛并获得一等奖，获杭州市总工会认定为“杭州市职工经济技术创新能手”。
+    summary: "参加2026年杭州市人工智能训练师（数据标注员）职业技能竞赛并获得一等奖，获杭州市总工会认定为“杭州市职工经济技术创新能手”。"
     media:
       image: "/images/experience/hangzhou-ai-trainer-competition-2026.jpeg"
       alt: "2026年杭州市人工智能训练师（数据标注员）职业技能竞赛参赛人员合影"
       caption: "媒体引用：潮新闻《2026年杭州市人工智能训练师职业技能竞赛圆满落幕》"
       source: "https://tidenews.com.cn/news.html?id=3457724"
-    stackTitle: "能力覆盖"
     stack:
       - "人工智能训练"
       - "数据采集与清洗"
@@ -33,7 +32,7 @@ projects:
       - "模型部署推理"
       - "数据分析"
   - title: "工业温控设备蓝牙控制App"
-    type: "前端开发"
+    type: "软件开发"
     period: "2025.10 - 至今"
     icon: "mobile"
     summary: "面向工业温控设备的移动端运维 App，支持 BLE 蓝牙连接、实时数据读取、参数配置、固件升级与历史文件导出。项目基于 uni-app、Vue2 与 uView 开发，通过 BLE 与设备进行 Modbus RTU 协议通信，满足无网络环境下的设备调试与维护需求。"
