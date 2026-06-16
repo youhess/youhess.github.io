@@ -1,5 +1,5 @@
 ---
-title: "events"
+title: "Events"
 slug: "projects"
 layout: "projects"
 comments: false
@@ -9,12 +9,25 @@ menu:
     params:
       icon: briefcase
 intro:
-  eyebrow: "EXPERIENCE"
+  eyebrow: "EVENTS"
   description: ""
 projects:
+  - title: "2026年杭州市大数据算法工程师职业技能竞赛"
+    type: "第五名"
+    period: "2026.06.13"
+    summary: "参加2026年杭州市大数据算法工程师职业技能竞赛并获得第五名。竞赛围绕数据处理、机器学习工程实践、深度学习模型训练与应用、大模型微调与应用等内容，综合考查从数据治理、模型训练到部署应用的全流程工程实践能力。"
+    stack:
+      - "大数据算法"
+      - "数据清洗"
+      - "特征工程"
+      - "机器学习"
+      - "深度学习"
+      - "模型训练与调优"
+      - "大模型微调"
+      - "模型部署应用"
   - title: "2026年杭州市人工智能训练师（数据标注员）职业技能竞赛"
     type: "一等奖"
-    period: "2026.05"
+    period: "2026.05.17"
     icon: "analytics"
     summary: "参加2026年杭州市人工智能训练师（数据标注员）职业技能竞赛并获得一等奖，获杭州市总工会认定为“杭州市职工经济技术创新能手”。"
     media:
