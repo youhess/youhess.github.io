@@ -21,30 +21,6 @@
                 <article class="experience-card">
                     <span class="experience-card__dot" aria-hidden="true"></span>
                     <header class="experience-card__header">
-                        <div class="experience-card__icon experience-card__icon--{{ .icon }}" aria-hidden="true">
-                            {{ if eq .icon "analytics" }}
-                                <svg viewBox="0 0 24 24" role="img" focusable="false">
-                                    <path d="M4 4h16v12H4z"></path>
-                                    <path d="M8 20h8"></path>
-                                    <path d="M12 16v4"></path>
-                                    <path d="m7 12 3-3 3 2 4-5"></path>
-                                    <path d="M7 14h10"></path>
-                                </svg>
-                            {{ else if eq .icon "mobile" }}
-                                <svg viewBox="0 0 24 24" role="img" focusable="false">
-                                    <path d="M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path>
-                                    <path d="M10 18h4"></path>
-                                    <path d="M9 5h6"></path>
-                                </svg>
-                            {{ else }}
-                                <svg viewBox="0 0 24 24" role="img" focusable="false">
-                                    <path d="M17.5 18H8a5 5 0 1 1 1-9.9 6 6 0 0 1 11 3.3A3.5 3.5 0 0 1 17.5 18z"></path>
-                                    <path d="M12 12v8"></path>
-                                    <path d="m8.5 15.5 3.5-3.5 3.5 3.5"></path>
-                                </svg>
-                            {{ end }}
-                        </div>
-
                         <div class="experience-card__meta">
                             <h2>
                                 {{ .title }}

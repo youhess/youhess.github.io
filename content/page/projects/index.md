@@ -16,6 +16,8 @@ projects:
     type: "第五名"
     period: "2026.06.13"
     summary: "参加2026年杭州市大数据算法工程师职业技能竞赛并获得第五名。竞赛围绕数据处理、机器学习工程实践、深度学习模型训练与应用、大模型微调与应用等内容，综合考查从数据治理、模型训练到部署应用的全流程工程实践能力。"
+    media:
+      image: "/images/experience/hangzhou-ai-big-model-competition-2026.jpg"
     stack:
       - "大数据算法"
       - "数据清洗"
